@@ -1,5 +1,5 @@
-import pytest
 import pandas as pd
+import pytest
 
 from etl.transform import TransformJob
 
@@ -21,7 +21,7 @@ class TestTransformJob:
                         "barcode": [1111, 2222, 3333],
                         "order_id": [1, 2, 3],
                     }
-                )
+                ),
             ),
             (
                 pd.DataFrame(
@@ -36,7 +36,7 @@ class TestTransformJob:
                         "barcode": [1111, 2222, 3333, 1111, 3333],
                         "order_id": [1, 2, 3, 3, 1],
                     }
-                )
+                ),
             ),
             (
                 pd.DataFrame(
@@ -51,14 +51,16 @@ class TestTransformJob:
                         "barcode": [],
                         "order_id": [],
                     }
-                )
-            )
-        ]
+                ),
+            ),
+        ],
     )
     def test_handle_duplicates(self, df, columns, expected_result):
         job = TransformJob()
         result = job.handle_duplicates(df, columns)
-        pd.testing.assert_frame_equal(expected_result.reset_index(drop=True), result.reset_index(drop=True))
+        pd.testing.assert_frame_equal(
+            expected_result.reset_index(drop=True), result.reset_index(drop=True)
+        )
 
     @pytest.mark.parametrize(
         "df, column, expected_result",
@@ -76,7 +78,7 @@ class TestTransformJob:
                         "barcode": [1111, 3333, 1111, 3333],
                         "order_id": [1, 3, 3, 1],
                     }
-                )
+                ),
             ),
             (
                 pd.DataFrame(
@@ -91,14 +93,18 @@ class TestTransformJob:
                         "barcode": [1111, 3333, None],
                         "order_id": [1, 3, 3],
                     }
-                )
+                ),
             ),
-        ]
+        ],
     )
     def test_handle_empty_values(self, df, column, expected_result):
         job = TransformJob()
         result = job.handle_empty_values(df, column)
-        pd.testing.assert_frame_equal(expected_result.reset_index(drop=True), result.reset_index(drop=True), check_dtype=False)
+        pd.testing.assert_frame_equal(
+            expected_result.reset_index(drop=True),
+            result.reset_index(drop=True),
+            check_dtype=False,
+        )
 
     @pytest.mark.parametrize(
         "df, group_column, column, sort_key, n_top, expected_result",
@@ -106,7 +112,14 @@ class TestTransformJob:
             (
                 pd.DataFrame(
                     {
-                        "barcode": [(1, 2, 3), (1,), (1, 2), (1, 2, 3, 4), (1,), (1, 2, 3)],
+                        "barcode": [
+                            (1, 2, 3),
+                            (1,),
+                            (1, 2),
+                            (1, 2, 3, 4),
+                            (1,),
+                            (1, 2, 3),
+                        ],
                         "order_id": [1, 2, 3, 3, 3, 1],
                     }
                 ),
@@ -119,7 +132,7 @@ class TestTransformJob:
                         "order_id": [3],
                         "barcode": [(1, 2, 1, 2, 3, 4, 1)],
                     }
-                )
+                ),
             ),
             (
                 pd.DataFrame(
@@ -137,14 +150,16 @@ class TestTransformJob:
                         "order_id": [3],
                         "barcode": [9999],
                     }
-                )
+                ),
             ),
-        ]
+        ],
     )
     def test_find_top(self, df, group_column, column, sort_key, n_top, expected_result):
         job = TransformJob()
         result = job.find_top(df, group_column, column, sort_key, n_top)
-        pd.testing.assert_frame_equal(expected_result.reset_index(drop=True), result.reset_index(drop=True))
+        pd.testing.assert_frame_equal(
+            expected_result.reset_index(drop=True), result.reset_index(drop=True)
+        )
 
     def test_transform(self):
         job = TransformJob()
@@ -164,8 +179,10 @@ class TestTransformJob:
             {
                 "customer_id": [1, 1, 2],
                 "order_id": [1, 3, 2],
-                "barcode": [[1111, 3333], [4444], [2222, 5555]]
-             }
+                "barcode": [[1111, 3333], [4444], [2222, 5555]],
+            }
         )
         result = job.transform_data(df_barcodes, df_orders)
-        pd.testing.assert_frame_equal(expected_result.reset_index(drop=True), result.reset_index(drop=True))
+        pd.testing.assert_frame_equal(
+            expected_result.reset_index(drop=True), result.reset_index(drop=True)
+        )

@@ -35,7 +35,11 @@ class TransformJob:
 
     @staticmethod
     def find_top(
-        df: pd.DataFrame, group_column: str, column: str, sort_key: Callable, n_top: int = 5
+        df: pd.DataFrame,
+        group_column: str,
+        column: str,
+        sort_key: Callable,
+        n_top: int = 5,
     ) -> pd.DataFrame:
         """Method to find specified number of top rows by provided sorting
         function."""
